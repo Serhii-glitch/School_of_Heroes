@@ -90,7 +90,7 @@ test ('e2e donation test', async ({page}) => {
   .fill('+45 33 53 53 53');
 
 // write an e-mail
-  await page.getByPlaceholder('Введіть вашу електронну адресу').type('sdfgsdfg@gmail.com')
+  await page.getByPlaceholder('Введіть вашу електронну адресу').fill('sdfgsdfg@gmail.com')
 
 // press checkbox
   const check = page.locator('input[type="checkbox"]') 
@@ -103,6 +103,6 @@ test ('e2e donation test', async ({page}) => {
   await page.getByLabel('Відправити').click();
 
 // check if the next page has loaded
-  await page.getByTestId('liqpay_logo_light').waitFor();
+  await page.getByTestId('privat_pay_btn').waitFor();
   await expect(page.getByLabel('Privat24 Pay Button')).toBeVisible();
 });
