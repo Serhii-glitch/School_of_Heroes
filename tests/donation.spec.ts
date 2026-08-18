@@ -8,16 +8,13 @@ test.beforeEach(async ({ page }) => {
 test ('e2e donation test', async ({page}) => { 
 
 // select assistance
-  const assistance = [
-    'Щомісячна допомога',
-    'Разова допомога'
-  ];
+  const assistanceTestIds = ['tabMonthly', 'tabOnetime'];
 
-  const assistance_index = Math.floor(Math.random() * assistance.length);
+  const assistance_index = Math.floor(Math.random() * assistanceTestIds.length);
 
-  const selectedButtonText = assistance[assistance_index];
+  const selectedTestId = assistanceTestIds[assistance_index];
 
-  const button = page.getByText(selectedButtonText);
+  const button = page.getByTestId(selectedTestId);
 
   await button.scrollIntoViewIfNeeded();
   await button.hover();
@@ -25,49 +22,46 @@ test ('e2e donation test', async ({page}) => {
 
 // select a currency
   const currency = [
-    'EUR',
-    'USD',
-    'UAH'
+    { testId: 'currencyEur', code: 'EUR' },
+    { testId: 'currencyUsd', code: 'USD' },
+    { testId: 'currencyUah', code: 'UAH' },
   ];
 
   const currency_index = Math.floor(Math.random() * currency.length);
 
   const selectedcurrency = currency[currency_index];
 
-  const currencys = page.getByRole('radio', {
-  name: selectedcurrency
-});
+  const currencys = page.getByTestId(selectedcurrency.testId);
 
   await currencys.hover();
   await currencys.click();
 
 // select a value
-  const value = [
-    '100',
-    '200',
-    '500',
-    '1000',
-    '2000'
-  ];
+  const amounts = [
+    { testId: 'amountOption100', value: '100' },
+    { testId: 'amountOption200', value: '200' },
+    { testId: 'amountOption500', value: '500' },
+    { testId: 'amountOption1000', value: '1000' },
+    { testId: 'amountOption2000', value: '2000' },
+];
 
-  const random_value = Math.floor(Math.random() * value.length);
+  const amountIndex = Math.floor(Math.random() * amounts.length);
 
-  const selectedvalue = value[random_value];
+  const selectedAmount  = amounts[amountIndex];
 
-  const values = page.getByRole('button', {
-  name: `${selectedvalue} ${selectedcurrency}`
-});
+  const amountButton = page.getByTestId(selectedAmount.testId);
 
-  await values.scrollIntoViewIfNeeded();
-  await values.hover();
-  await values.click();
+  await amountButton.scrollIntoViewIfNeeded();
+  await amountButton.hover();
+  await amountButton.click();
 
 // select a city
-  const element = page.getByText('Оберіть місто'); 
+  const element = page.getByTestId('citySelect'); 
   await element.scrollIntoViewIfNeeded(); 
   await element.click(); 
   await expect(page.getByText('Калуш Орісіл')).toBeVisible(); 
-  const cities = page.locator('[class*="scrollbar"] button'); 
+
+  const cities = page.getByTestId('cityOption'); 
   const count = await cities.count(); 
   if (count === 0) throw new Error('No cities found'); 
   const cities_Index = Math.floor(Math.random() * count); 
@@ -76,31 +70,32 @@ test ('e2e donation test', async ({page}) => {
   await selectedCity.click(); 
 
 // enter name & surname
-  const name = page.getByPlaceholder('Введіть ваше ім’я'); 
-  await name.scrollIntoViewIfNeeded(); await name.fill('fff'); 
+  const name = page.getByTestId('firstNameInput'); 
+  await name.scrollIntoViewIfNeeded(); await name.fill('ff'); 
   await name.press('Tab'); 
-  const sur = page.getByPlaceholder('Введіть ваше прізвище'); 
+  const sur = page.getByTestId('lastNameInput'); 
   await sur.scrollIntoViewIfNeeded(); 
   await sur.fill('fff'); 
   await sur.press('Tab'); 
 
 // enter phone number
   await page
-  .getByPlaceholder('Введіть ваш номер телефону')
+  .getByTestId('phoneInput')
   .fill('+45 33 53 53 53');
 
 // write an e-mail
-  await page.getByPlaceholder('Введіть вашу електронну адресу').fill('sdfgsdfg@gmail.com')
+  await page.getByTestId('emailInput').fill('sdfgsdfg@gmail.com')
 
 // press checkbox
-  const check = page.locator('input[type="checkbox"]') 
-  await check.scrollIntoViewIfNeeded(); 
-  await check.click({ force: true });
+  const check = page.getByTestId('agreementCheckbox');
+  const checkboxInput = check.locator('input[type="checkbox"]');
+  await checkboxInput.scrollIntoViewIfNeeded(); 
+  await checkboxInput.click({ force: true });
   
   await page.waitForTimeout(2000);
 
 // press a button
-  await page.getByLabel('Відправити').click();
+  await page.getByTestId('submitButton').click();
 
 // check if the next page has loaded
   await page.getByTestId('privat_pay_btn').waitFor();
